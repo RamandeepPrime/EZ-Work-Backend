@@ -6,7 +6,7 @@ from resources.userTypes import UserTypes
 class User(BaseModel):
 	username: str
 	email: EmailStr
-	usertype: Optional[UserTypes]=UserTypes.Client
+	userType: Optional[UserTypes]=UserTypes.Client
 
 
 class UserInLogIn(BaseModel):
@@ -18,3 +18,9 @@ class CreateUser(UserInLogIn):
 
 class UserToken(BaseModel):
 	token: str
+
+class UserEmail(BaseModel):
+	email: EmailStr
+
+# class DisableUser(BaseModel):
+# 	client_email_that_you_want_to_disable:EmailStr

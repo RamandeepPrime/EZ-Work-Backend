@@ -7,3 +7,7 @@ class EntityAlreadyExists(Exception):
 
 class JwtError(Exception):
 	pass
+
+class DisabledError(Exception):
+	pass
+

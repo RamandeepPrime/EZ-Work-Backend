@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 # schemas
 from database.schemas.user import CreateUser,UserInLogIn
-from database.schemas.error import EntityAlreadyExists,EntityNotFound
+from database.schemas.error import EntityAlreadyExists,EntityNotFound, DisabledError
 
 # jwt verification
 from resources.jwt_verify import get_hashed_password,verify_password
@@ -40,6 +40,9 @@ def verify_user(db: Session, user: UserInLogIn):
 
 	if(login_user is None or not verify_password(user.password, login_user.password)):
 		raise EntityNotFound('Invalid Credentials')
+	
+	if(login_user.isDisabled):
+		raise DisabledError("You can't login because you are banned by Operation User")
 
 	return login_user
 
