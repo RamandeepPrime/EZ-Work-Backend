@@ -42,7 +42,7 @@ def verification_link(response: Response, token: schema.UserToken = Depends(oaut
 		)
 
 	# REDIS.set(curr_user.email, token, ex = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")) * 30) # 30 minutes 1*30
-	# bycrpt token
+	
 	hashed_token=fernet.encrypt(token.encode()).decode()
 	print(hashed_token)
 	send_verification_link(curr_user.email, hashed_token)
@@ -81,13 +81,4 @@ def verify_email_link(hashed_token:	str, user_email: str, response: Response , d
 			errors=[str(e)]
 			)
 
-	
 
-
-
-
-
-
-
-
-#bcript the token the then send it to user with html

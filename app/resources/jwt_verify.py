@@ -50,7 +50,6 @@ def create_jwt_token(user: schema.User, expires_delta: timedelta = timedelta(min
 def get_user_from_token(token: str):
 
 	pattern=f'token:{token}'
-	print(get_token_redis(pattern))
 	if(get_token_redis(pattern)==None):
 		raise HTTPException(400, 'You already logged out or Token has expired')
 		
@@ -63,7 +62,6 @@ def get_user_from_token(token: str):
 	
 	except ValidationError as validation_error:
 		raise JwtError("Payload is changed in token")
-
 
 
 

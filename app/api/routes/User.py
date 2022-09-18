@@ -11,6 +11,7 @@ from resources.oath import get_user_token
 from database.schemas.responses import SuccessResponse, ErrorResponse
 from database.schemas.error import EntityNotFound, EntityAlreadyExists, DisabledError
 from cryptography.fernet import Fernet
+from fastapi.responses import JSONResponse
 
 import os
 
@@ -25,14 +26,18 @@ router = APIRouter()
 def signup(user: schema.CreateUser, response: Response, db: Session = Depends(get_session)):
     
     try:
-        queries.create_user(db, user)
+        curr_user=queries.create_user(db, user)
 
-    except EntityAlreadyExists as e:
+    except EntityAlreadyExists :
 
-        response.status_code = 400
-        return ErrorResponse(erors=[str(e)])
+        return JSONResponse(status_code=400, content={'message': 'user_already_exists'})
+    
+    token = create_jwt_token(schema.User(username = curr_user.username, email = curr_user.email,
+                                         userType = curr_user.userType))
+    # return SuccessResponse(message="User has been succesfully created")
+    return JSONResponse(status_code=200, content={'message': 'User has been succesfully created',
+                                                                    'token':f"{token}"})
 
-    return SuccessResponse(message="User has been succesfully created")
 
 
 @router.post('/login', response_model=Union[ErrorResponse, schema.UserToken])
@@ -60,25 +65,25 @@ def login(user: schema.UserInLogIn, response: Response, db: Session = Depends(ge
 
 
 @router.get('/disableUser', response_model=Union[SuccessResponse, ErrorResponse])
-def disable_user(response: Response, user_email: schema.UserEmail, action:bool, user: schema.User = Depends(get_user_token), db: Session = Depends(get_session)):
+def disable_user(response: Response, curr_user: schema.DisableUser, user: schema.User = Depends(get_user_token), db: Session = Depends(get_session)):
     
-    print(user.email, user.userType)
+    
     if(user.userType=='Client'):
-        response.status_code = 400
+        response.status_code = 401
         return ErrorResponse(
-            errors=["You are not authorized to do this operation or refresh the token"]
+            errors=["You are not authorized to do this operation"]
         )
     
-    banned_user = queries.get_user(db, user_email.email)
+    banned_user = queries.get_user(db, curr_user.email)
     
     if(not banned_user):
         response.status_code = 400
         return  ErrorResponse(
-            errors=[f'''User with email: {user_email.email} does not exist''']
+            errors=[f'''User with email: {curr_user.email} does not exist''']
         )
     if(banned_user.isDisabled):
 
-        if(action):
+        if(curr_user.action):
             response.status_code = 400
             return  ErrorResponse(
                 errors=[f'''User with email: {banned_user.email}  already disabled''']
@@ -87,7 +92,7 @@ def disable_user(response: Response, user_email: schema.UserEmail, action:bool, 
             banned_user.isDisabled=0
             db.add(banned_user)
             db.commit()
-            return SuccessResponse(message=f'''User with email: {banned_user.email} has been enbled ''')
+            return SuccessResponse(message=f'''User with email: {banned_user.email} has been enabled ''')
 
 
     banned_user.isDisabled=1
@@ -103,7 +108,7 @@ def logout(response: Response, token: schema.UserToken = Depends(oauth2_scheme))
     if(get_token_redis(pattern)):
         delete_token_redis(pattern)
     
-        return SuccessResponse(message='Succesfully loged out')
+        return SuccessResponse(message='Succesfully logged out')
     
     response.status_code = 400
     return ErrorResponse(

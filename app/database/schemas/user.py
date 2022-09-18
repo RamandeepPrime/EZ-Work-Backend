@@ -22,5 +22,6 @@ class UserToken(BaseModel):
 class UserEmail(BaseModel):
 	email: EmailStr
 
-# class DisableUser(BaseModel):
-# 	client_email_that_you_want_to_disable:EmailStr
+class DisableUser(BaseModel):
+	email: EmailStr
+	action: bool
