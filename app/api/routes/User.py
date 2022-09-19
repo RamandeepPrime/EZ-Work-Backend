@@ -64,7 +64,7 @@ def login(user: schema.UserInLogIn, response: Response, db: Session = Depends(ge
     )
 
 
-@router.get('/disableUser', response_model=Union[SuccessResponse, ErrorResponse])
+@router.post('/disableUser', response_model=Union[SuccessResponse, ErrorResponse])
 def disable_user(response: Response, curr_user: schema.DisableUser, user: schema.User = Depends(get_user_token), db: Session = Depends(get_session)):
     
     

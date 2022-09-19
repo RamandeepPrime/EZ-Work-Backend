@@ -9,8 +9,8 @@ from resources.jwt_verify import oauth2_scheme, get_user_from_token
 from database.dependencies import get_session
 from database.schemas.responses import SuccessResponse, ErrorResponse
 
-import os
-from .User import fernet,PASSKEY
+from .User import fernet
+from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
@@ -55,11 +55,11 @@ def verification_link(response: Response, token: schema.UserToken = Depends(oaut
 @router.get('/auth/verify', response_model=Union[SuccessResponse, ErrorResponse])
 def verify_email_link(hashed_token:	str, user_email: str, response: Response , db: Session = Depends(get_session)):
 
-	print(hashed_token, user_email)
-	token=fernet.decrypt(hashed_token.encode()).decode()
+	
 
 	try:
 		
+		token=fernet.decrypt(hashed_token.encode()).decode()
 		curr_user=get_user_from_token(token)#get from schemas.user
 
 		if(curr_user.email == user_email):
@@ -75,10 +75,7 @@ def verify_email_link(hashed_token:	str, user_email: str, response: Response , d
 			errors=["Wrong email address or token"]
 			)
 
-	except Exception as e:
-		response.status_code = 400
-		return ErrorResponse(
-			errors=[str(e)]
-			)
+	except Exception:
+		return JSONResponse(status_code=400, content="Invalid token")
 
 
