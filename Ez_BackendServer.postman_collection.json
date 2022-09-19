@@ -482,14 +482,25 @@
 				{
 					"name": "disableUser",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/disableUser",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"disableUser"
+							]
+						}
 					},
 					"response": [
 						{
 							"name": "UserDosn'tExist",
 							"originalRequest": {
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -539,7 +550,7 @@
 						{
 							"name": "ActivityDisabled",
 							"originalRequest": {
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -589,7 +600,7 @@
 						{
 							"name": "EnableUser",
 							"originalRequest": {
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -634,12 +645,12 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"message\": \"User with email: soone@example.com has been enbled \"\n}"
+							"body": "{\n    \"message\": \"User with email: soone@example.com has been enabled \"\n}"
 						},
 						{
 							"name": "AlreadyDisabled",
 							"originalRequest": {
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -689,7 +700,7 @@
 						{
 							"name": "NotAuthorizedByClient",
 							"originalRequest": {
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -739,7 +750,7 @@
 						{
 							"name": "TokenEpired",
 							"originalRequest": {
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
